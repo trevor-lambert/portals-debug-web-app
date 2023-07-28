@@ -1,0 +1,8 @@
+{
+  "name": "Portals Debug Web App",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "7f8bed55"
+}
