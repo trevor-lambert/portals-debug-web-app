@@ -40,19 +40,27 @@ const CapacitorPlugins = () => {
   const defaultPlugins = ["CapacitorCookies", "CapacitorHttp", "WebView"];
 
   const handleDisabledPlugins = () => {
-    for (const plugin of plugins) {
-      try {
-        const method =
-          plugin.name +
-          // @ts-ignore
-          (window.Capacitor.getPlatform() === "ios"
-            ? "IosInterface"
-            : "AndroidInterface");
+    const capacitorCookiesPlugin = plugins.find(
+      (plugin) => plugin.name === "CapacitorCookies"
+    );
+    const capacitorHttpPlugin = plugins.find(
+      (plugin) => plugin.name === "CapacitorHttp"
+    );
+
+    // @ts-ignore
+    if (window.Capacitor.getPlatform() == "ios") {
+      capacitorCookiesPlugin!.isDisabled =
+        prompt(JSON.stringify({ type: "CapacitorCookies.isEnabled" })) ===
+        "false";
+      capacitorHttpPlugin!.isDisabled =
+        prompt(JSON.stringify({ type: "CapacitorHttp" })) === "false";
+    } else {
+      capacitorCookiesPlugin!.isDisabled =
         // @ts-ignore
-        plugin.isDisabled = !window[method].isEnabled();
-      } catch (error) {
-        console.log(error);
-      }
+        !window.CapacitorCookiesAndroidInterface.isEnabled();
+      capacitorHttpPlugin!.isDisabled =
+        // @ts-ignore
+        !window.CapacitorHttpAndroidInterface.isEnabled();
     }
   };
 
@@ -68,7 +76,10 @@ const CapacitorPlugins = () => {
         </IonListHeader>
         <IonAccordionGroup expand="inset">
           {plugins.map((plugin) => (
-            <IonAccordion key={plugin.name} disabled={plugin.isDisabled}>
+            <IonAccordion
+              key={plugin.name}
+              disabled={Boolean(plugin.isDisabled)}
+            >
               <IonItem slot="header" color="light">
                 {plugin.name}
                 {defaultPlugins.includes(plugin.name) && (
