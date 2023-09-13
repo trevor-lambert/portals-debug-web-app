@@ -80,21 +80,24 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
       </IonHeader>
       <IonContent className="ion-padding">
         <IonListHeader>Argument:</IonListHeader>
-        <IonItem>
-          <IonTextarea
-            placeholder="Enter argument here..."
-            autoGrow={true}
-            onIonInput={(e) => setCode(e.detail.value!)}
-          />
-        </IonItem>
-        <IonButton
-          expand="block"
-          onClick={handleCallMethod}
-          style={{ padding: 10 }}
-        >
-          Execute {methodName}
-        </IonButton>
-
+        <IonList>
+          <IonItem>
+            <IonTextarea
+              placeholder="Enter argument here..."
+              value={code}
+              autoGrow={true}
+              onIonInput={(e) => setCode(e.detail.value!)}
+            />
+          </IonItem>
+          <IonButton
+            expand="block"
+            onClick={handleCallMethod}
+            size="small"
+            style={{ padding: 10 }}
+          >
+            Execute {methodName}
+          </IonButton>
+        </IonList>
         <IonListHeader>Result:</IonListHeader>
         <IonList lines="inset">
           {error && (
@@ -116,6 +119,7 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
             </IonItem>
           )}
         </IonList>
+        {/* <Editor /> */}
       </IonContent>
     </IonModal>
   );

@@ -6,13 +6,15 @@ import {
   IonLabel,
   IonListHeader,
   IonPage,
+  IonText,
 } from "@ionic/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CallMethodModal from "./CallMethodModal";
 
 interface Plugin {
   name: string;
   methods: Method[];
+  isDisabled?: boolean;
 }
 
 interface Method {
@@ -35,6 +37,29 @@ const CapacitorPlugins = () => {
     "requestPermissions",
   ];
 
+  const defaultPlugins = ["CapacitorCookies", "CapacitorHttp", "WebView"];
+
+  const handleDisabledPlugins = () => {
+    for (const plugin of plugins) {
+      try {
+        const method =
+          plugin.name +
+          // @ts-ignore
+          (window.Capacitor.getPlatform() === "ios"
+            ? "IosInterface"
+            : "AndroidInterface");
+        // @ts-ignore
+        plugin.isDisabled = !window[method].isEnabled();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleDisabledPlugins();
+  }, []);
+
   return (
     <IonPage>
       <IonContent>
@@ -43,9 +68,14 @@ const CapacitorPlugins = () => {
         </IonListHeader>
         <IonAccordionGroup expand="inset">
           {plugins.map((plugin) => (
-            <IonAccordion key={plugin.name}>
+            <IonAccordion key={plugin.name} disabled={plugin.isDisabled}>
               <IonItem slot="header" color="light">
-                <IonLabel>{plugin.name}</IonLabel>
+                {plugin.name}
+                {defaultPlugins.includes(plugin.name) && (
+                  <IonText color="medium" style={{ margin: 5 }}>
+                    {`(Default)`}
+                  </IonText>
+                )}
               </IonItem>
               <div slot="content">
                 {plugin.methods.map(
