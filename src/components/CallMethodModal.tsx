@@ -19,6 +19,9 @@ import {
   alertCircleOutline,
   checkmarkCircleOutline,
 } from "ionicons/icons";
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-json";
+import "ace-builds/src-noconflict/theme-github";
 
 interface CallMethodModalProps {
   showModal: boolean;
@@ -82,11 +85,21 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
         <IonListHeader>Argument:</IonListHeader>
         <IonList>
           <IonItem>
-            <IonTextarea
-              placeholder="Enter argument here..."
+            <AceEditor
+              height="200px"
               value={code}
-              autoGrow={true}
-              onIonInput={(e) => setCode(e.detail.value!)}
+              placeholder="Enter valid JSON here..."
+              mode="json"
+              theme="github"
+              fontSize="13px"
+              highlightActiveLine={true}
+              onChange={(e) => setCode(e)}
+              setOptions={{
+                showLineNumbers: true,
+                tabSize: 2,
+                useWorker: false,
+              }}
+              style={{ marginTop: 10 }}
             />
           </IonItem>
           <IonButton
@@ -119,7 +132,6 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
             </IonItem>
           )}
         </IonList>
-        {/* <Editor /> */}
       </IonContent>
     </IonModal>
   );
