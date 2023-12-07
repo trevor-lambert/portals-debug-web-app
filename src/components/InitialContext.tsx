@@ -4,6 +4,9 @@ import {
   IonContent,
   IonPage,
   IonListHeader,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
   IonLabel,
   IonList,
 } from "@ionic/react";
@@ -13,8 +16,12 @@ const InitialContext = () => {
 
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle size="large">Initial Context</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
-        <IonListHeader>Initial Context</IonListHeader>
         <IonList inset={true}>
           <IonItem color="light">
             <IonLabel style={{ whiteSpace: "pre-wrap" }}>

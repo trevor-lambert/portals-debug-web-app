@@ -1,53 +1,48 @@
 import {
-  IonModal,
   IonContent,
-  IonListHeader,
   IonButton,
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonIcon,
   IonItem,
-  IonTextarea,
   IonLabel,
   IonList,
 } from "@ionic/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  chevronBack,
   alertCircleOutline,
   checkmarkCircleOutline,
 } from "ionicons/icons";
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/mode-json";
-import "ace-builds/src-noconflict/theme-github";
+import Editor, { useMonaco } from "@monaco-editor/react";
 
 interface CallMethodModalProps {
-  showModal: boolean;
   pluginName: string;
   methodName: string;
-  onCloseModal: () => void;
 }
 
+const darkModeMatch = window.matchMedia("(prefers-color-scheme: dark)");
+
 const CallMethodModal: React.FC<CallMethodModalProps> = ({
-  showModal,
   pluginName,
   methodName,
-  onCloseModal,
 }) => {
-  const [code, setCode] = useState<string>("");
+  const codeRef = useRef("");
+  const monaco = useMonaco();
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    monaco?.editor.setTheme(darkModeMatch.matches ? "vs-dark" : "vs")
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (_e) => {
+      monaco?.editor.setTheme(darkModeMatch.matches ? "vs-dark" : "vs")
+    });
+  }, []);
 
   const handleCallMethod = async () => {
     setResult("");
     setError("");
     try {
       // @ts-ignore
-      const res = await window.Capacitor.Plugins[pluginName][methodName](
-        JSON.parse(code || '""')
-      );
+      const res = await window.Capacitor.Plugins[pluginName][methodName](JSON.parse(codeRef.current));
       setResult(JSON.stringify(res));
     } catch (error) {
       if (error instanceof Error) {
@@ -58,82 +53,74 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
     }
   };
 
-  const handleCloseModal = () => {
-    setCode("");
-    setResult("");
-    setError("");
-    onCloseModal();
-  };
-
   return (
-    <IonModal isOpen={showModal} onDidDismiss={handleCloseModal}>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons>
-            <IonButton onClick={handleCloseModal}>
-              <IonIcon icon={chevronBack} />
-              Back
-            </IonButton>
-          </IonButtons>
-          <IonTitle>{methodName}</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={handleCallMethod}>Execute</IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent className="ion-padding">
-        <IonListHeader>Argument:</IonListHeader>
-        <IonList>
-          <IonItem>
-            <AceEditor
-              height="200px"
-              value={code}
-              placeholder="Enter valid JSON here..."
-              mode="json"
-              theme="github"
-              fontSize="13px"
-              highlightActiveLine={true}
-              onChange={(e) => setCode(e)}
-              setOptions={{
-                showLineNumbers: true,
-                tabSize: 2,
-                useWorker: false,
-              }}
-              style={{ marginTop: 10 }}
-            />
+    <IonContent className="ion-padding">
+      <IonHeader>Argument:</IonHeader>
+      <Editor
+        onMount={(_editor, monaco) => {
+          monaco.editor.setTheme(darkModeMatch.matches ? "vs-dark" : "vs")
+        }}
+        height="200px"
+        defaultLanguage="json"
+        defaultValue={codeRef.current}
+        onChange={(e) => codeRef.current = e ?? ""}
+        options={{
+          accessibilitySupport: "off",
+          theme: "vs-dark",
+          lineDecorationsWidth: 0,
+          glyphMargin: false,
+          inlineSuggest: {
+            enabled: false
+          },
+          quickSuggestions: false,
+          suggestOnTriggerCharacters: false,
+          parameterHints: {
+            enabled: false
+          },
+          inlayHints: {
+            enabled: "off"
+          },
+          lineNumbersMinChars: 2,
+          folding: false,
+          lineNumbers: "on",
+          scrollbar: {
+            vertical: "hidden",
+            horizontal: "hidden",
+          },
+          minimap: {
+            enabled: false,
+          },
+        }}
+      />
+      <IonButton
+        expand="block"
+        onClick={handleCallMethod}
+        size="small"
+        style={{ padding: 10 }}
+      >
+        Execute {methodName}
+      </IonButton>
+      <IonList lines="inset">
+        {error && (
+          <IonItem color="light">
+            <IonIcon icon={alertCircleOutline} slot="start" color="danger" />
+            <IonLabel color="danger" class="ion-text-wrap">
+              {error}
+            </IonLabel>
           </IonItem>
-          <IonButton
-            expand="block"
-            onClick={handleCallMethod}
-            size="small"
-            style={{ padding: 10 }}
-          >
-            Execute {methodName}
-          </IonButton>
-        </IonList>
-        <IonListHeader>Result:</IonListHeader>
-        <IonList lines="inset">
-          {error && (
-            <IonItem color="light">
-              <IonIcon icon={alertCircleOutline} slot="start" color="danger" />
-              <IonLabel color="danger" class="ion-text-wrap">
-                {error}
-              </IonLabel>
-            </IonItem>
-          )}
-          {result && (
-            <IonItem color="light">
-              <IonIcon
-                icon={checkmarkCircleOutline}
-                color="success"
-                slot="start"
-              />
-              <IonLabel class="ion-text-wrap">{result}</IonLabel>
-            </IonItem>
-          )}
-        </IonList>
-      </IonContent>
-    </IonModal>
+        )}
+        {result && (
+          <IonItem color="light">
+            <IonIcon
+              icon={checkmarkCircleOutline}
+              color="success"
+              slot="start"
+            />
+            <IonLabel class="ion-text-wrap">{result}</IonLabel>
+          </IonItem>
+        )}
+      </IonList>
+    </IonContent>
   );
 };
 

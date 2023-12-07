@@ -2,13 +2,23 @@ import {
   IonAccordion,
   IonAccordionGroup,
   IonContent,
+  IonHeader,
+  IonButton,
+  IonToolbar,
+  IonButtons,
   IonItem,
   IonLabel,
   IonListHeader,
+  IonModal,
   IonPage,
   IonText,
+  IonTitle,
+  IonIcon
 } from "@ionic/react";
 import { useEffect, useState } from "react";
+import {
+  chevronBack,
+} from "ionicons/icons";
 import CallMethodModal from "./CallMethodModal";
 
 interface Plugin {
@@ -70,10 +80,12 @@ const CapacitorPlugins = () => {
 
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Capacitor Plugins</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
-        <IonListHeader>
-          <h3 style={{ fontWeight: 700 }}>Capacitor Plugins</h3>
-        </IonListHeader>
         <IonAccordionGroup expand="inset">
           {plugins.map((plugin) => (
             <IonAccordion
@@ -109,12 +121,25 @@ const CapacitorPlugins = () => {
             </IonAccordion>
           ))}
         </IonAccordionGroup>
-        <CallMethodModal
-          showModal={showModal}
-          methodName={methodName}
-          pluginName={pluginName}
-          onCloseModal={() => setShowModal(false)}
-        />
+        <IonModal isOpen={showModal}>
+          <IonPage>
+            <IonHeader>
+              <IonToolbar>
+                <IonButtons>
+                  <IonButton onClick={() => setShowModal(false)}>
+                    <IonIcon icon={chevronBack} />
+                    Back
+                  </IonButton>
+                </IonButtons>
+                <IonTitle>{methodName}</IonTitle>
+              </IonToolbar>
+            </IonHeader >
+            <CallMethodModal
+              methodName={methodName}
+              pluginName={pluginName}
+            />
+          </IonPage>
+        </IonModal>
       </IonContent>
     </IonPage>
   );

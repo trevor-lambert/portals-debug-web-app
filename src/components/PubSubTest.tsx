@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { PortalMessage, publish, subscribe } from "@ionic/portals";
 import {
   IonAccordion,
   IonAccordionGroup,
   IonButton,
   IonContent,
+  IonHeader,
   IonInput,
   IonItem,
   IonLabel,
   IonList,
   IonListHeader,
   IonPage,
+  IonTitle,
+  IonToolbar,
 } from "@ionic/react";
-import { PortalMessage, subscribe, publish } from "@ionic/portals";
+import { useState } from "react";
 
 interface SubscriptionMessage {
   id: number;
@@ -78,6 +81,11 @@ const PubSubTest = () => {
 
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Publish / Subscribe</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
         <IonListHeader>
           <h3 style={{ fontWeight: 700 }}>Publish</h3>
