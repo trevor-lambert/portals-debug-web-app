@@ -25,7 +25,7 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
   pluginName,
   methodName,
 }) => {
-  const codeRef = useRef("");
+  const codeRef = useRef("{}");
   const monaco = useMonaco();
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -43,7 +43,7 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
     try {
       // @ts-ignore
       const res = await window.Capacitor.Plugins[pluginName][methodName](JSON.parse(codeRef.current));
-      setResult(JSON.stringify(res));
+      setResult(JSON.stringify(res, null, 2));
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -66,7 +66,7 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
         onChange={(e) => codeRef.current = e ?? ""}
         options={{
           accessibilitySupport: "off",
-          theme: "vs-dark",
+          theme: darkModeMatch.matches ? "vs-dark" : "vs",
           lineDecorationsWidth: 0,
           glyphMargin: false,
           inlineSuggest: {
@@ -110,14 +110,21 @@ const CallMethodModal: React.FC<CallMethodModalProps> = ({
           </IonItem>
         )}
         {result && (
-          <IonItem color="light">
-            <IonIcon
-              icon={checkmarkCircleOutline}
-              color="success"
-              slot="start"
-            />
-            <IonLabel class="ion-text-wrap">{result}</IonLabel>
-          </IonItem>
+          <>
+            <IonItem color="light">
+              <IonIcon
+                icon={checkmarkCircleOutline}
+                color="success"
+                slot="start"
+              />
+              <IonLabel>Success</IonLabel>
+            </IonItem>
+            <IonItem color="light">
+              <IonLabel style={{ whiteSpace: "pre-wrap" }}>
+                <code>{result}</code>
+              </IonLabel>
+            </IonItem>
+          </>
         )}
       </IonList>
     </IonContent>

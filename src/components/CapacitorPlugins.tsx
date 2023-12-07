@@ -1,16 +1,13 @@
 import {
   IonAccordion,
   IonAccordionGroup,
-  IonContent,
   IonHeader,
   IonButton,
   IonToolbar,
   IonButtons,
   IonItem,
   IonLabel,
-  IonListHeader,
   IonModal,
-  IonPage,
   IonText,
   IonTitle,
   IonIcon
@@ -20,6 +17,7 @@ import {
   chevronBack,
 } from "ionicons/icons";
 import CallMethodModal from "./CallMethodModal";
+import TabPage from "./TabPage";
 
 interface Plugin {
   name: string;
@@ -79,69 +77,60 @@ const CapacitorPlugins = () => {
   }, []);
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Capacitor Plugins</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <IonAccordionGroup expand="inset">
-          {plugins.map((plugin) => (
-            <IonAccordion
-              key={plugin.name}
-              disabled={Boolean(plugin.isDisabled)}
-            >
-              <IonItem slot="header" color="light">
-                {plugin.name}
-                {defaultPlugins.includes(plugin.name) && (
-                  <IonText color="medium" style={{ margin: 5 }}>
-                    {`(Default)`}
-                  </IonText>
-                )}
-              </IonItem>
-              <div slot="content">
-                {plugin.methods.map(
-                  (method) =>
-                    !ignoredMethods.includes(method.name) && (
-                      <IonItem
-                        key={method.name}
-                        detail={true}
-                        onClick={() => {
-                          setMethodName(method.name),
-                            setPluginName(plugin.name);
-                          setShowModal(true);
-                        }}
-                      >
-                        <IonLabel>{method.name}</IonLabel>
-                      </IonItem>
-                    )
-                )}
-              </div>
-            </IonAccordion>
-          ))}
-        </IonAccordionGroup>
-        <IonModal isOpen={showModal}>
-          <IonPage>
-            <IonHeader>
-              <IonToolbar>
-                <IonButtons>
-                  <IonButton onClick={() => setShowModal(false)}>
-                    <IonIcon icon={chevronBack} />
-                    Back
-                  </IonButton>
-                </IonButtons>
-                <IonTitle>{methodName}</IonTitle>
-              </IonToolbar>
-            </IonHeader >
-            <CallMethodModal
-              methodName={methodName}
-              pluginName={pluginName}
-            />
-          </IonPage>
-        </IonModal>
-      </IonContent>
-    </IonPage>
+    <TabPage title="Capacitor Plugins">
+      <IonAccordionGroup expand="inset">
+        {plugins.map((plugin) => (
+          <IonAccordion
+            key={plugin.name}
+            disabled={Boolean(plugin.isDisabled)}
+          >
+            <IonItem slot="header" color="light">
+              {plugin.name}
+              {defaultPlugins.includes(plugin.name) && (
+                <IonText color="medium" style={{ margin: 5 }}>
+                  {`(Default)`}
+                </IonText>
+              )}
+            </IonItem>
+            <div slot="content">
+              {plugin.methods.map(
+                (method) =>
+                  !ignoredMethods.includes(method.name) && (
+                    <IonItem
+                      key={method.name}
+                      detail={true}
+                      onClick={() => {
+                        setMethodName(method.name),
+                          setPluginName(plugin.name);
+                        setShowModal(true);
+                      }}
+                    >
+                      <IonLabel>{method.name}</IonLabel>
+                    </IonItem>
+                  )
+              )}
+            </div>
+          </IonAccordion>
+        ))}
+      </IonAccordionGroup>
+      <IonModal isOpen={showModal}>
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons>
+              <IonButton onClick={() => setShowModal(false)}>
+                <IonIcon icon={chevronBack} />
+                Back
+              </IonButton>
+            </IonButtons>
+            <IonTitle>{methodName}</IonTitle>
+          </IonToolbar>
+        </IonHeader >
+        <CallMethodModal
+          methodName={methodName}
+          pluginName={pluginName}
+        />
+      </IonModal>
+    </TabPage>
   );
 };
 
