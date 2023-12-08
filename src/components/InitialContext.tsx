@@ -1,29 +1,24 @@
 import { getInitialContext } from "@ionic/portals";
 import {
   IonItem,
-  IonContent,
-  IonPage,
-  IonListHeader,
   IonLabel,
   IonList,
 } from "@ionic/react";
+import TabPage from "./TabPage";
 
 const InitialContext = () => {
   const initialContext = getInitialContext<any>();
 
   return (
-    <IonPage>
-      <IonContent>
-        <IonListHeader>Initial Context</IonListHeader>
-        <IonList inset={true}>
-          <IonItem color="light">
-            <IonLabel style={{ whiteSpace: "pre-wrap" }}>
-              <code>{JSON.stringify(initialContext, null, 2)}</code>
-            </IonLabel>
-          </IonItem>
-        </IonList>
-      </IonContent>
-    </IonPage>
+    <TabPage title="Initial Context">
+      <IonList inset={true}>
+        <IonItem color="light">
+          <IonLabel style={{ whiteSpace: "pre-wrap" }}>
+            {initialContext ? <code>{JSON.stringify(initialContext, null, 2)}</code> : "No initial context found"}
+          </IonLabel>
+        </IonItem>
+      </IonList>
+    </TabPage>
   );
 };
 

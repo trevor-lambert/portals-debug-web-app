@@ -25,13 +25,17 @@ const PortalsDebug = () => {
           <Redirect exact path="/" to="/initial-context" />
           <Route
             path="/initial-context"
-            render={() => <InitialContext />}
+            component={InitialContext}
             exact={true}
           />
-          <Route path="/pub-sub" render={() => <PubSubTest />} exact={true} />
+          <Route
+            path="/pub-sub"
+            component={PubSubTest}
+            exact={true}
+          />
           <Route
             path="/plugins"
-            render={() => <CapacitorPlugins />}
+            component={CapacitorPlugins}
             exact={true}
           />
         </IonRouterOutlet>

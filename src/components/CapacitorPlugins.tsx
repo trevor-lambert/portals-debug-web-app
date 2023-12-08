@@ -1,15 +1,23 @@
 import {
   IonAccordion,
   IonAccordionGroup,
-  IonContent,
+  IonHeader,
+  IonButton,
+  IonToolbar,
+  IonButtons,
   IonItem,
   IonLabel,
-  IonListHeader,
-  IonPage,
+  IonModal,
   IonText,
+  IonTitle,
+  IonIcon
 } from "@ionic/react";
 import { useEffect, useState } from "react";
+import {
+  chevronBack,
+} from "ionicons/icons";
 import CallMethodModal from "./CallMethodModal";
+import TabPage from "./TabPage";
 
 interface Plugin {
   name: string;
@@ -69,54 +77,60 @@ const CapacitorPlugins = () => {
   }, []);
 
   return (
-    <IonPage>
-      <IonContent>
-        <IonListHeader>
-          <h3 style={{ fontWeight: 700 }}>Capacitor Plugins</h3>
-        </IonListHeader>
-        <IonAccordionGroup expand="inset">
-          {plugins.map((plugin) => (
-            <IonAccordion
-              key={plugin.name}
-              disabled={Boolean(plugin.isDisabled)}
-            >
-              <IonItem slot="header" color="light">
-                {plugin.name}
-                {defaultPlugins.includes(plugin.name) && (
-                  <IonText color="medium" style={{ margin: 5 }}>
-                    {`(Default)`}
-                  </IonText>
-                )}
-              </IonItem>
-              <div slot="content">
-                {plugin.methods.map(
-                  (method) =>
-                    !ignoredMethods.includes(method.name) && (
-                      <IonItem
-                        key={method.name}
-                        detail={true}
-                        onClick={() => {
-                          setMethodName(method.name),
-                            setPluginName(plugin.name);
-                          setShowModal(true);
-                        }}
-                      >
-                        <IonLabel>{method.name}</IonLabel>
-                      </IonItem>
-                    )
-                )}
-              </div>
-            </IonAccordion>
-          ))}
-        </IonAccordionGroup>
+    <TabPage title="Capacitor Plugins">
+      <IonAccordionGroup expand="inset">
+        {plugins.map((plugin) => (
+          <IonAccordion
+            key={plugin.name}
+            disabled={Boolean(plugin.isDisabled)}
+          >
+            <IonItem slot="header" color="light">
+              {plugin.name}
+              {defaultPlugins.includes(plugin.name) && (
+                <IonText color="medium" style={{ margin: 5 }}>
+                  {`(Default)`}
+                </IonText>
+              )}
+            </IonItem>
+            <div slot="content">
+              {plugin.methods.map(
+                (method) =>
+                  !ignoredMethods.includes(method.name) && (
+                    <IonItem
+                      key={method.name}
+                      detail={true}
+                      onClick={() => {
+                        setMethodName(method.name),
+                          setPluginName(plugin.name);
+                        setShowModal(true);
+                      }}
+                    >
+                      <IonLabel>{method.name}</IonLabel>
+                    </IonItem>
+                  )
+              )}
+            </div>
+          </IonAccordion>
+        ))}
+      </IonAccordionGroup>
+      <IonModal isOpen={showModal}>
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons>
+              <IonButton onClick={() => setShowModal(false)}>
+                <IonIcon icon={chevronBack} />
+                Back
+              </IonButton>
+            </IonButtons>
+            <IonTitle>{methodName}</IonTitle>
+          </IonToolbar>
+        </IonHeader >
         <CallMethodModal
-          showModal={showModal}
           methodName={methodName}
           pluginName={pluginName}
-          onCloseModal={() => setShowModal(false)}
         />
-      </IonContent>
-    </IonPage>
+      </IonModal>
+    </TabPage>
   );
 };
 
