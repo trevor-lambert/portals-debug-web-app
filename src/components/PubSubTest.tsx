@@ -17,7 +17,7 @@ interface SubscriptionMessage {
   date: string;
   portalMessage: {
     topic: string;
-    data: any;
+    data?: any;
   };
 }
 
@@ -65,7 +65,7 @@ const PubSubTest = () => {
 
       await subscribe(subscribeTopic, (res) => {
         const date = new Date().toLocaleTimeString().split(" ")[0];
-        const subscriptionMessage: SubscriptionMessage = { id: id, date, portalMessage: { topic: res.topic, data: res.data || null } };
+        const subscriptionMessage = { id: id, date, portalMessage: res };
         setId((prevId) => prevId + 1);
         setSubscriptionMessages((prevSubMessages) => [
           subscriptionMessage,
