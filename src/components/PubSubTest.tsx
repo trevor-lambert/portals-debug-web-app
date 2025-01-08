@@ -65,7 +65,7 @@ const PubSubTest = () => {
 
       await subscribe(subscribeTopic, (res) => {
         const date = new Date().toLocaleTimeString().split(" ")[0];
-        const subscriptionMessage = { id: id, date, portalMessage: res };
+        const subscriptionMessage: SubscriptionMessage = { id: id, date, portalMessage: { topic: res.topic, data: res.data || null } };
         setId((prevId) => prevId + 1);
         setSubscriptionMessages((prevSubMessages) => [
           subscriptionMessage,
